@@ -7,6 +7,7 @@ import LandingPage from "./components/LandingPage";
 import Footer from "./components/Footer";
 import Login from "./components/Login";
 import Card from "./components/Card/Card";
+import CourseList from "./components/CourseList";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/app/filter" element={<Analytics />} />
+          <Route path="/app/courses" element={<CourseList />} />
         </Routes>
       </div>
     </BrowserRouter>
