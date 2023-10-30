@@ -1,4 +1,12 @@
 import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+} from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
+
 import CourseItem from "./CourseItem";
 //import { Link, Element } from "react-scroll";
 import { Link } from "react-router-dom";
@@ -14,6 +22,65 @@ const CourseList = () => {
   const [dataAnalysisIsExpanded, setDataAnalysisIsExpanded] = useState(false);
   const [networkingIsExpanded, setNetworkingIsExpanded] = useState(false);
   const [deviceIsExpanded, setDeviceIsExpanded] = useState(false);
+
+  // for dialog window opening
+  const [open, setOpen] = React.useState(false);
+  const [selectedCourse, setSelectedCourse] = React.useState(null);
+
+  const handleOpen = (course) => {
+    setSelectedCourse(course);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  function CourseSection({ title, courses, isExpanded, toggleExpanded }) {
+    return (
+      <>
+        <h2
+          className="md:text-2xl text-[white] sm:text-3xl text-2xl font-bold py-2 ml-4"
+          onClick={toggleExpanded}
+          style={{ cursor: "pointer" }}
+        >
+          {title}
+          <span style={{ whiteSpace: "pre" }}>
+            {isExpanded ? "      ▴" : "      ▾"}{" "}
+          </span>
+        </h2>
+
+        {isExpanded && (
+          <p className="text-[#FFFFFF] font-bold pl-6 ml-10">
+            {courses.map((course) => (
+              <li key={course.id} className="flex items-center my-2">
+                <input
+                  type="checkbox"
+                  checked={!!checkedCourses[course.id]}
+                  onChange={(e) => {
+                    setCheckedCourses((prev) => ({
+                      ...prev,
+                      [course.id]: e.target.checked,
+                    }));
+                  }}
+                  className="mr-3"
+                />
+                {course.name}
+                <InfoIcon
+                  onClick={() => handleOpen(course)}
+                  style={{
+                    marginLeft: "8px",
+                    cursor: "pointer",
+                    color: "#007BFF",
+                  }}
+                />
+              </li>
+            ))}
+          </p>
+        )}
+      </>
+    );
+  }
 
   useEffect(() => {
     // Fetch data from your URL
@@ -36,258 +103,76 @@ const CourseList = () => {
             Select Courses{" "}
           </h1>
           {/* Displaying the list of courses with checkboxes */}
-          <h2
-            className="md:text-2xl text-[white] sm:text-3xl text-2xl font-bold py-2 ml-4"
-            onClick={() => setGeneralIsExpanded(!generalIsExpanded)}
-            style={{ cursor: "pointer" }}
-          >
-            General
-            <span style={{ whiteSpace: "pre" }}>
-              {generalIsExpanded ? "      ▴" : "      ▾"}{" "}
-            </span>
-          </h2>
-          {generalIsExpanded && (
-            <p className="text-[#FFFFFF] font-bold pl-6 ml-10">
-              {courses
-                .filter((course) => course.category === "General")
-                .map((course) => {
-                  return (
-                    <li key={course.id} className="flex items-center my-2">
-                      <input
-                        type="checkbox"
-                        checked={!!checkedCourses[course.id]}
-                        onChange={(e) => {
-                          setCheckedCourses((prev) => ({
-                            ...prev,
-                            [course.id]: e.target.checked,
-                          }));
-                        }}
-                        className="mr-3"
-                      />
-                      {course.name}
-                    </li>
-                  );
-                })}
-            </p>
-          )}
 
-          <h2
-            className="md:text-2xl text-[white] sm:text-3xl text-2xl font-bold py-2 ml-4"
-            onClick={() => setFrontendlIsExpanded(!frontendIsExpanded)}
-            style={{ cursor: "pointer" }}
-          >
-            Frontend{" "}
-            <span style={{ whiteSpace: "pre" }}>
-              {frontendIsExpanded ? "      ▴" : "      ▾"}{" "}
-            </span>
-          </h2>
+          <CourseSection
+            title="General"
+            courses={courses.filter((course) => course.category === "General")}
+            isExpanded={generalIsExpanded}
+            toggleExpanded={() => setGeneralIsExpanded(!generalIsExpanded)}
+          />
 
-          {frontendIsExpanded && (
-            <p className="text-[#FFFFFF] font-bold pl-6 ml-10">
-              {courses
-                .filter((course) => course.category === "Frontend")
-                .map((course) => {
-                  return (
-                    <li key={course.id} className="flex items-center my-2">
-                      <input
-                        type="checkbox"
-                        checked={!!checkedCourses[course.id]}
-                        onChange={(e) => {
-                          setCheckedCourses((prev) => ({
-                            ...prev,
-                            [course.id]: e.target.checked,
-                          }));
-                        }}
-                        className="mr-3"
-                      />
-                      {course.name}
-                    </li>
-                  );
-                })}
-            </p>
-          )}
+          <CourseSection
+            title="Frontend"
+            courses={courses.filter((course) => course.category === "Frontend")}
+            isExpanded={frontendIsExpanded}
+            toggleExpanded={() => setFrontendlIsExpanded(!frontendIsExpanded)}
+          />
 
-          <h2
-            className="md:text-2xl text-[white] sm:text-3xl text-2xl font-bold py-2 ml-4"
-            onClick={() => setBackendIsExpanded(!backendIsExpanded)}
-            style={{ cursor: "pointer" }}
-          >
-            Backend{" "}
-            <span style={{ whiteSpace: "pre" }}>
-              {backendIsExpanded ? "      ▴" : "      ▾"}{" "}
-            </span>
-          </h2>
+          <CourseSection
+            title="Backend"
+            courses={courses.filter((course) => course.category === "Backend")}
+            isExpanded={backendIsExpanded}
+            toggleExpanded={() => setBackendIsExpanded(!backendIsExpanded)}
+          />
 
-          {backendIsExpanded && (
-            <p className="text-[#FFFFFF] font-bold pl-6 ml-10">
-              {courses
-                .filter((course) => course.category === "Backend")
-                .map((course) => {
-                  return (
-                    <li key={course.id} className="flex items-center my-2">
-                      <input
-                        type="checkbox"
-                        checked={!!checkedCourses[course.id]}
-                        onChange={(e) => {
-                          setCheckedCourses((prev) => ({
-                            ...prev,
-                            [course.id]: e.target.checked,
-                          }));
-                        }}
-                        className="mr-3"
-                      />
-                      {course.name}
-                    </li>
-                  );
-                })}
-            </p>
-          )}
+          <CourseSection
+            title="Embedded Systems (IoT)"
+            courses={courses.filter((course) => course.category === "IoT")}
+            isExpanded={iotIsExpanded}
+            toggleExpanded={() => setIotIsExpanded(!iotIsExpanded)}
+          />
 
-          <h2
-            className="md:text-2xl text-[white] sm:text-3xl text-2xl font-bold py-2 ml-4"
-            onClick={() => setIotIsExpanded(!iotIsExpanded)}
-            style={{ cursor: "pointer" }}
-          >
-            Embedded Systems (IoT){" "}
-            <span style={{ whiteSpace: "pre" }}>
-              {iotIsExpanded ? "      ▴" : "      ▾"}{" "}
-            </span>
-          </h2>
+          <CourseSection
+            title="Data Analysis"
+            courses={courses.filter(
+              (course) => course.category === "Data Analysis"
+            )}
+            isExpanded={dataAnalysisIsExpanded}
+            toggleExpanded={() =>
+              setDataAnalysisIsExpanded(!dataAnalysisIsExpanded)
+            }
+          />
 
-          {iotIsExpanded && (
-            <p className="text-[#FFFFFF] font-bold pl-6 ml-10">
-              {courses
-                .filter((course) => course.category === "IoT")
-                .map((course) => {
-                  return (
-                    <li key={course.id} className="flex items-center my-2">
-                      <input
-                        type="checkbox"
-                        checked={!!checkedCourses[course.id]}
-                        onChange={(e) => {
-                          setCheckedCourses((prev) => ({
-                            ...prev,
-                            [course.id]: e.target.checked,
-                          }));
-                        }}
-                        className="mr-3"
-                      />
-                      {course.name}
-                    </li>
-                  );
-                })}
-            </p>
-          )}
+          <CourseSection
+            title="Networking and Cloud Technologies"
+            courses={courses.filter(
+              (course) => course.category === "Networking"
+            )}
+            isExpanded={networkingIsExpanded}
+            toggleExpanded={() =>
+              setNetworkingIsExpanded(!networkingIsExpanded)
+            }
+          />
 
-          <h2
-            className="md:text-2xl text-[white] sm:text-3xl text-2xl font-bold py-2 ml-4"
-            onClick={() => setDataAnalysisIsExpanded(!dataAnalysisIsExpanded)}
-            style={{ cursor: "pointer" }}
-          >
-            Data Analysis{" "}
-            <span style={{ whiteSpace: "pre" }}>
-              {dataAnalysisIsExpanded ? "      ▴" : "      ▾"}{" "}
-            </span>
-          </h2>
+          <CourseSection
+            title="Device Oriented Programming"
+            courses={courses.filter(
+              (course) => course.category === "Device oriented programming"
+            )}
+            isExpanded={deviceIsExpanded}
+            toggleExpanded={() => setDeviceIsExpanded(!deviceIsExpanded)}
+          />
 
-          {dataAnalysisIsExpanded && (
-            <p className="text-[#FFFFFF] font-bold pl-6 ml-10">
-              {courses
-                .filter((course) => course.category === "Data Analysis")
-                .map((course) => {
-                  return (
-                    <li key={course.id} className="flex items-center my-2">
-                      <input
-                        type="checkbox"
-                        checked={!!checkedCourses[course.id]}
-                        onChange={(e) => {
-                          setCheckedCourses((prev) => ({
-                            ...prev,
-                            [course.id]: e.target.checked,
-                          }));
-                        }}
-                        className="mr-3"
-                      />
-                      {course.name}
-                    </li>
-                  );
-                })}
-            </p>
-          )}
-
-          <h2
-            className="md:text-2xl text-[white] sm:text-3xl text-2xl font-bold py-2 ml-4"
-            onClick={() => setNetworkingIsExpanded(!networkingIsExpanded)}
-            style={{ cursor: "pointer" }}
-          >
-            Networking and Cloud Technologies{" "}
-            <span style={{ whiteSpace: "pre" }}>
-              {networkingIsExpanded ? "      ▴" : "      ▾"}{" "}
-            </span>
-          </h2>
-
-          {networkingIsExpanded && (
-            <p className="text-[#FFFFFF] font-bold pl-6 ml-10">
-              {courses
-                .filter((course) => course.category === "Networking")
-                .map((course) => {
-                  return (
-                    <li key={course.id} className="flex items-center my-2">
-                      <input
-                        type="checkbox"
-                        checked={!!checkedCourses[course.id]}
-                        onChange={(e) => {
-                          setCheckedCourses((prev) => ({
-                            ...prev,
-                            [course.id]: e.target.checked,
-                          }));
-                        }}
-                        className="mr-3"
-                      />
-                      {course.name}
-                    </li>
-                  );
-                })}
-            </p>
-          )}
-
-          <h2
-            className="md:text-2xl text-[white] sm:text-3xl text-2xl font-bold py-2 ml-4"
-            onClick={() => setDeviceIsExpanded(!deviceIsExpanded)}
-            style={{ cursor: "pointer" }}
-          >
-            Device Oriented Programming{" "}
-            <span style={{ whiteSpace: "pre" }}>
-              {deviceIsExpanded ? "      ▴" : "      ▾"}{" "}
-            </span>
-          </h2>
-
-          {deviceIsExpanded && (
-            <p className="text-[#FFFFFF] font-bold pl-6 ml-10">
-              {courses
-                .filter(
-                  (course) => course.category === "Device oriented programming"
-                )
-                .map((course) => {
-                  return (
-                    <li key={course.id} className="flex items-center my-2">
-                      <input
-                        type="checkbox"
-                        checked={!!checkedCourses[course.id]}
-                        onChange={(e) => {
-                          setCheckedCourses((prev) => ({
-                            ...prev,
-                            [course.id]: e.target.checked,
-                          }));
-                        }}
-                        className="mr-3"
-                      />
-                      {course.name}
-                    </li>
-                  );
-                })}
-            </p>
-          )}
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>{selectedCourse?.name}</DialogTitle>
+            <DialogContent>
+              <DialogContentText
+                style={{ backgroundColor: "yourPreferredColor" }}
+              >
+                {selectedCourse?.description}
+              </DialogContentText>
+            </DialogContent>
+          </Dialog>
 
           <Link to={"/login"}>
             <button className="bg-custom-green text-[black] w-[200px] rounded-md font-medium my-6 mx-auto md:mx-0 py-3">
